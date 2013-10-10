@@ -31,7 +31,7 @@ def main():
 	xkLin_ajustada = mfs.ajuste_periodos(xkLin,freqLin)	
 	xkCub_ajustada = mfs.ajuste_periodos(xkCub,freqCub)
 	
-	#Reconstruye la senales y grafica la senal suavizada y los datos reales para cada interpolacion
+	#Reconstruye la senales
 	mfs.manchas_reconstruidas(xkConst_ajustada,data)
 	mfs.manchas_reconstruidas(xkLin_ajustada,data)
 	mfs.manchas_reconstruidas(xkCub_ajustada,data)
