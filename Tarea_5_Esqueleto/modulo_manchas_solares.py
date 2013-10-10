@@ -56,7 +56,8 @@ def fourierTransform(data_Interpolacion):
 def espectro_potencias(fft_x):
 
      """
-     Esta funcion calcula el espectro de potencias de un arreglo numpy que tiene por entrada, al sacarles el valor absoluto y elevarlo al cuadrado
+     Esta funcion calcula el espectro de potencias de un arreglo numpy que tiene por entrada, al sacarles el valor absoluto y elevarlo al cuadrado.
+     Adicionalmente grafica el espectro de cada interpolacion en una grafica diferente para poder comparar los espectros de potencia de estas.
 
      Input:
      - fft_x: arreglo numpy de numeros complejos de tamano [4607]. Amplitudes de cada senal.
