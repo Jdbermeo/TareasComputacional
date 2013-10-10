@@ -60,6 +60,7 @@ def chiCuadrado(data,dataReconstruida):
 	Output: Nada 
 	"""
 	
-	
+	chi2 = empty(24)
+		
 	return
 
