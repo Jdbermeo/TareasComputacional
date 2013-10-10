@@ -21,7 +21,7 @@ def main():
 	freqLin, xkLin = mfs.fourierTransform(interpLin)
 	freqCub, xkCub = mfs.fourierTransform(interpCub)
 
-	#Encuentra el espectro de potencias de las 3 interpolaciones
+	#Encuentra el espectro de potencias de las 3 interpolaciones y grafica cada espectro de potencias para poderlos comparar.
 	PxkConst = mfs.espectro_potencias(xkConst)	
 	PxkLin = mfs.espectro_potencias(xkLin)
 	PxkCub = mfs.espectro_potencias(xkCub)
