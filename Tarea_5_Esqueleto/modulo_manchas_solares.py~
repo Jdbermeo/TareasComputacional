@@ -11,7 +11,7 @@ Creation date: Miercoles Oct  9 2013
 
 def interpolacionConstante(data):
 	"""
-	- - Carga un array de numpy [4633,5]  y devuelve un arreglo numpy [4633,2] con los resultados de la interpolacion cubica para los años en que se tiene y no se tiene medicion. En los años en que no se tiene medicion se calculas por medio de una interpolacion lineal
+	- Carga un array de numpy [4633,5] elimina los años en los que no se hicieron mediciones, y devuelve un arreglo numpy [4633,2] con los resultados de la interpolacion constante 
 	- La Interppolacion constante consiste el valor de tiempo desconocido que sigue igual al dato que le precede en tiempo. 
 	Input: arreglo de numpy [4633,5]
 	Output: arreglo de numpy [4632,2] con los datos interpolados en los meses en los que no tenemos medicion 
@@ -49,7 +49,7 @@ def interpolacionConstante(data):
 	
 def interpolacionLineal(data):
 	"""
-	- Carga un array de numpy [4633,5]  y devuelve un arreglo numpy [4633,2] con los resultados de la interpolacion cubica para los años en que se tiene y no se tiene medicion. En los años en que no se tiene medicion se calculas por medio de una interpolacion lineal
+	- Carga un array de numpy [4633,5] elimina los años en los que no se hicieron mediciones, y devuelve un arreglo numpy [4633,2] con los resultados de la interpolacion lineal 
 	- La Interppolacion lineal consiste en que el valor desconocido se aproxima como el punto en el tiempo t sobre la linea que conecta el anterior punto conocido y el siguiente punto conocido. 
 	Input: arreglo de numpy [4633,5]
 	Output: arreglo de numpy [4632,2] con los datos interpolados en los meses en los que no tenemos medicion  
@@ -89,7 +89,7 @@ def interpolacionLineal(data):
 
 def interpolacionCubica(data):
 	"""
-	- Carga un array de numpy [4633,5]  y devuelve un arreglo numpy [4633,2] con los resultados de la interpolacion cubica para los años en que se tiene y no se tiene medicion. En los años en que no se tiene medicion se calculas por medio de una interpolacion cubica
+	- Carga un array de numpy [4633,5] elimina los años en los que no se hicieron mediciones, y devuelve un arreglo numpy [4633,2] con los resultados de la interpolacion cubica 
 	- La Interppolacion cubica consiste en que el valor desconocido se aproxima como el punto en el tiempo t que esta sobre el arco del polinomio de grado 3 que pasa por el anterior punto conocido y el siguiente punto conocido 
 	Input: arreglo de numpy [4633,5]
 	Output: arreglo de numpy [4633,2] con los datos interpolados en los meses en los que no tenemos medicion
@@ -129,9 +129,9 @@ def interpolacionCubica(data):
 
 def fourierTransform(data_Interpolacion):
 	"""
-	Carga un array de numpy [4633,2] y le calcula la transformada de fourier.
-	Input: arreglo de numpy [4633,2]
-	Output: dos arreglos de numpy de [4633]
+	Carga un array de numpy [4607] y le calcula la transformada de fourier.
+	Input: arreglo de numpy [4607]
+	Output: dos arreglos de numpy de [4607]
 		- fft_freq: Frecuencias de armonico.
      		- fft_amplitudes: Amplitud de cada xk. 
 	"""

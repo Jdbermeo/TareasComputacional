@@ -21,10 +21,10 @@ def main():
 	freqLin, xkLin = mfs.fourierTransform(interpLin)
 	freqCub, xkCub = mfs.fourierTransform(interpCub)
 
-	#Grafica el espectro de potencias de las 3 interpolaciones
-	mfs.espectro_potencias(freqConst,xkConst)	
-	mfs.espectro_potencias(freqLin,xkLin)
-	mfs.espectro_potencias(freqCub,xkCub)
+	#Encuentra el espectro de potencias de las 3 interpolaciones
+	PxkConst = mfs.espectro_potencias(xkConst)	
+	PxkLin = mfs.espectro_potencias(xkLin)
+	PxkCub = mfs.espectro_potencias(xkCub)
 
 	#Elimina los xk que correspondan a periodos que no esten entre 2 y 20 anos
 	xkConst_ajustada = mfs.ajuste_periodos(xkConst,freqConst)  
