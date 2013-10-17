@@ -21,10 +21,8 @@ def main():
 	freqLin, xkLin = mfs.fourierTransform(interpLin)
 	freqCub, xkCub = mfs.fourierTransform(interpCub)
 
-	#Encuentra el espectro de potencias de las 3 interpolaciones
-	PxkConst = mfs.espectro_potencias(xkConst)	
-	PxkLin = mfs.espectro_potencias(xkLin)
-	PxkCub = mfs.espectro_potencias(xkCub)
+	#Grafica el espectro de potencias de las 3 interpolaciones
+	mfs.espectro_potencias(freqConst,xkConst,freqLin,xkLin,freqCub,xkCub)
 
 	#Elimina los xk que correspondan a periodos que no esten entre 2 y 20 anos
 	xkConst_ajustada = mfs.ajuste_periodos(xkConst,freqConst)  
@@ -32,14 +30,14 @@ def main():
 	xkCub_ajustada = mfs.ajuste_periodos(xkCub,freqCub)
 	
 	#Reconstruye la senales y grafica la senal suavizada y los datos reales para cada interpolacion
-	mfs.manchas_reconstruidas(xkConst_ajustada,data)
-	mfs.manchas_reconstruidas(xkLin_ajustada,data)
-	mfs.manchas_reconstruidas(xkCub_ajustada,data)
+	mfs.manchas_reconstruidas(xkConst_ajustada,interpConst)
+	mfs.manchas_reconstruidas(xkLin_ajustada,interpLin)
+	mfs.manchas_reconstruidas(xkCub_ajustada,interpCub)
 
 	#Estima el periodo del ciclo solar
-	Periodo_IntpConst = mfs.ciclos_solares(xkConst_ajustada, freqConst)
-	Periodo_IntpLin = mfs.ciclos_solares(xkLin_ajustada, freqLin)
-	Periodo_IntpCub = mfs.ciclos_solares(xkCub_ajustada, freqCub)
+	mfs.ciclos_solares(xkConst_ajustada, freqConst,"Constante")
+	mfs.ciclos_solares(xkLin_ajustada, freqLin,"Lineal")
+	mfs.ciclos_solares(xkCub_ajustada, freqCub,"Cubica")
 
 if __name__ == "__main__":
     main()
