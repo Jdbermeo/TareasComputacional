@@ -12,12 +12,12 @@
 /*Definir como van a interactuar y cambiar las posiciones de los centros de masas de las dos galaxias. Con eso definido lo hecho para los otros puntos va a funcionar. Adicionalmente puede ayudar a mejorar el proceso para calcular el cambio en la poscion de los otros puntos. 
 */
 
-double y1prima(double x,double y1,double y2,double R)
+double y1prima(double t,double x, double y, double vx,double vy,double rx,double ry)
 {
-	return 	1.0/(y2-R)**2;
+	return 	-4.4973*(10**15)*(x-rx);
 }
 
-double y2prima(double x,double y1,double y2)
+double y2prima(double t,double y1,double y2)
 {
 	
 	return 	-4896189*y1;
