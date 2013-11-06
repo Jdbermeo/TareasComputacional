@@ -13,12 +13,21 @@
 
 */
 
+<<<<<<< HEAD
 double y1prima(float V_ant)
 {
 	return 	V_ant;
 }
 
 double y2prima(float x1, float x2,float rx1,float rx2)
+=======
+double y1prima(double t,double x, double y, double vx,double vy,double rx,double ry)
+{
+	return 	-4.4973*(10**15)*(x-rx);
+}
+
+double y2prima(double t,double y1,double y2)
+>>>>>>> 900585269b26f564ca17ec6651527c1566ababbd
 {
 	
 	return 	-G*(x1-rx1)/(pow(pow((x1-rx1),2)+pow((x2-rx2),2),(1.5)));

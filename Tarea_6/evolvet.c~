@@ -13,12 +13,21 @@
 
 */
 
+<<<<<<< HEAD
 double y1prima(float V_ant)
 {
 	return 	V_ant;
 }
 
 double y2prima(float x1, float x2,float rx1,float rx2)
+=======
+double y1prima(double t,double x, double y, double vx,double vy,double R)
+{
+	return 	-4.4973*(10**15);
+}
+
+double y2prima(double t,double y1,double y2)
+>>>>>>> 900585269b26f564ca17ec6651527c1566ababbd
 {
 	
 	return 	-G*(x1-rx1)/(pow(pow((x1-rx1),2)+pow((x2-rx2),2),(1.5)));
@@ -163,7 +172,17 @@ int main(int argc, char **argv)
 		memset( ky23, 0,  numG+numE *sizeof(float));
 		memset( ky24, 0,  numG+numE *sizeof(float));
 
+<<<<<<< HEAD
 		float promKx1[numG+numE],promKx2[numG+numE],promKy1[numG+numE],promKy2[numG+numE];
+=======
+int RungeKutta(double x_i, double vx_i, double y_i,double vy_i, double R[][],int numG)
+{
+	//Leer condiciones inciales del archivo
+	int i,j;
+	int numPuntos = 120;
+	double deltat= 5/numPuntos;
+	double t[numPuntos],v[numPuntos],r[numPuntos],x[numPuntos],y[numpuntos];
+>>>>>>> 900585269b26f564ca17ec6651527c1566ababbd
 
 		float x11[numG+numE],x12[numG+numE],x13[numG+numE],x14[numG+numE],x21[numG+numE],x22[numG+numE],x23[numG+numE],x24[numG+numE];
 		float y11[numG+numE],y12[numG+numE],y13[numG+numE],y14[numG+numE],y21[numG+numE],y22[numG+numE],y23[numG+numE],y24[numG+numE];
