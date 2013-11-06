@@ -1,0 +1,39 @@
+#include <stdlib.h>
+#include <stdio.h>	
+#include <math.h>
+#include <string.h>
+
+
+int main(int argc, char **argv)
+{
+	int numG = 0,numE = 0,test,j=0,clase;
+	float a1,a2,a3,a4;
+
+	//Abrir el archivo con las condiciones inicales de cada partícula
+	FILE *in;
+	in = fopen(argv[1],"r");
+	
+	//Se lee la posición de cada archivo  test = fscanf(in, "%i %f %f %f %f\n", &(clase), &(x_i), &(y_i),&(Vx_i),&(Vy_i));
+	do{
+		test = fscanf(in, "%i %f %f %f %f\n", &(clase),&(a1),&(a2),&(a3),&(a4));
+		if(clase != -1)
+		{
+			numE++;
+		}
+		else
+		{
+			numG++;
+		}
+		j++;
+	}while(test!=EOF);
+	if(numG>=j)
+		printf("%i %i %i\n",numG-1, numE,j-1);
+	
+	if(numE>=j)
+		printf("%i %i %i\n",numG, numE-1,j-1);
+	else 
+		printf("%i %i %i\n",numG, numE-1,j-1);
+
+	
+	return 0;
+}

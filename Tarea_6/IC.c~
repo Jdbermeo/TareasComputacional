@@ -13,6 +13,8 @@ Genera un archivo de texto con las condiciones iniciales necesarias para modelar
 #include <gsl/gsl_eigen.h>
 #include <gsl/gsl_blas.h>
 #include <gsl/gsl_linalg.h> 
+#include <string.h>
+#include <math.h>
 	
 /* Se definen las variables y las constantes*/
 	
