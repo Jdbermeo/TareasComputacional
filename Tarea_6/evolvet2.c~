@@ -19,9 +19,9 @@ float y2prima(float x1, float x2,float rx1,float rx2);
 int main(int argc, char **argv)
 {
 	int numG = 0,numE = 0;
-	float dt = 5.0/10000;
+	float dt = 5.0/100000;
 	float Fv = 1.0226895;
-	int test,i = 0,j = 0,k,clase,it=10001;
+	int test,i = 0,j = 0,k,clase,it=100001;
 	float a1,a2,a3,a4,xi,vxi,yi,vyi;
 	float *x_iG,*y_iG,*Vx_iG,*Vy_iG; //Para guardar las condiciones iniciales de los centros de las galaxias
 	float *x_iE,*y_iE,*Vx_iE,*Vy_iE; //Para guardar las condiciones iniciales de las estrellas
@@ -383,7 +383,7 @@ int main(int argc, char **argv)
 		}
 		
 		//Escribir los datos en un archivo de texto para graficarlos posteriormente
-		if(i==2000)
+		if(i==20000)
 		{	
 			char str1[50];
 			char str2[50] = "1 billon de años ";
@@ -400,7 +400,7 @@ int main(int argc, char **argv)
 				fprintf(out,"0 %f %f \n",posE_x[(j)],posE_y[(j)]);
 			}
 		}	
-		if(i==4000)
+		if(i==40000)
 		{	
 			char str1[50];
 			char str2[50] = "2 billon de años ";
@@ -416,7 +416,7 @@ int main(int argc, char **argv)
 				fprintf(out,"0 %f %f \n",posE_x[(j)],posE_y[(j)]);
 			}
 		}
-		if(i==6000)
+		if(i==60000)
 		{	
 			char str1[50];
 			char str2[50] = "3 billon de años ";
@@ -433,7 +433,7 @@ int main(int argc, char **argv)
 				fprintf(out,"0 %f %f \n",posE_x[(j)],posE_y[(j)]);
 			}
 		}
-		if(i==8000)
+		if(i==80000)
 		{	
 			char str1[50];
 			char str2[50] = "4 billon de años ";
@@ -450,7 +450,7 @@ int main(int argc, char **argv)
 				fprintf(out,"0 %f %f \n",posE_x[(j)],posE_y[(j)]);
 			}
 		}
-		if(i==10000)
+		if(i==100000)
 		{	
 			char str1[50];
 			char str2[50] = "5 billon de años ";
@@ -481,6 +481,6 @@ float y1prima(float V_ant)
 
 float y2prima(float x1, float x2,float rx1,float rx2)
 {
-	return -4499554.0*(x1-rx1)/(pow(pow((x1-rx1),2)+pow((x2-rx2),2),(1.5)));
+	return -4499554.0*(x1-rx1)/pow(pow(x1-rx1,2)+pow(x2-rx2,2),(1.5));
 }
 

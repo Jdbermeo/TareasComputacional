@@ -1,126 +1,451 @@
-/*
-
-Este programa carga uno o varios archivo(s) de texto donde se encuentra(n) determinadas las condiciones iniciales
-del problema de las galaxias y las usa como parametros.
-Todos los parametros son del tipo float.
-Genera 5 archivos de texto cada uno con las posiciones finales y velocidades de cada particula. Al programa no le importa cuantas galaxias esta manejando, simplemente resuelve las ecuaciones necesarias para determinar Las posiciones y las velocidades.
-
-*/
-
 #include <stdlib.h>
-#include <stdio.h>
-#include <gsl/gsl_math.h>
-#include <gsl/gsl_eigen.h>
-#include <gsl/gsl_blas.h>
-#include <gsl/gsl_linalg.h> 
-#include <string.h>
+#include <stdio.h>	
 #include <math.h>
+#include <string.h>
 
-/*
-	Una de las dos ecuaciones diferenciales de primer orden para rsolver la ecuacion diferencial de la interaccion gravitacional. Esta formula se usa en el metodo Runge-Kutta para solucionar la ecuacion diferencial de forma numerica.
-	Input:
-	- x: variable sobre la que se deriva, es decir el tiempo
-	- y1: Posicion en veolcidad
-	- y2: Posicion en 
-	- R: Distancia a la galaxia.
-	Output:
-	-El resultado de evaluar el cambio o y prima definido por la ecuacion diferencial de primer orden.
-*/
-double y1prima(double x,double y1,double y2,double R)
-{
-	return 	y2;
-}
 
-/*
-	Una de las dos ecuaciones diferenciales de primer orden para rsolver la ecuacion diferencial de la interaccion gravitacional. Esta formula se usa en el metodo Runge-Kutta para solucionar la ecuacion diferencial de forma numerica.
-	Input:
-	- x: variable sobre la que se deriva, es decir el tiempo
-	- y1: Posicion en veolcidad
-	- y2: Posicion en 
-	- R: Distancia a la galaxia.
-	Output:
-	-El resultado de evaluar el cambio o y prima definido por la ecuacion diferencial de primer orden.
-*/
-double y2prima(double x,double y1,double y2,double R)
-{
-	
-	return 	y1;
-}
 
- 
-/*
-	El programa recibe como parámetro el nombre del archivo donde se encuentran las posiciones y velocidades iniciales de las estrelals y de los centros de las galaxias. Con estos datos se calcula el cambio en posicion de las estrellas debido a la fuerza de atraccion del centro de cada galaxia. 
-	-Primero se evalua el cambio en posicion de los centros de masa de las galaxias por su interaccion gravitacional con el metodo Runge-Kutta de cuarto orden. 
-	-Despues se evalua el cambio en posicion de las estrellas teniendo en cuenta el cambio de posicion para los mismos cambios en tiempo de los centros de las galaxias.
-	-Se escribe en un 5 archivos de texto de las posiciones de los cuerpos en intervalos de billon de años hasa llegar a 5 billones de años. 
+
+
+/*Definir como van a interactuar y cambiar las posiciones de los centros de masas de las dos galaxias. Con eso definido lo hecho para los otros puntos va a funcionar. Adicionalmente puede ayudar a mejorar el proceso para calcular el cambio en la poscion de los otros puntos. 
 
 */
 
-int main(int argc, char **argv){
 
-	/* Se definen las variables y las constantes*/
-	
-	FILE *input; //Para abrir el archivo de las condicones iniciales
-	double G;
-	double numG =0; //Para guardar el número de galaxias.
-	int i,j; // Para los loops. 
+float y1prima(float V_ant);
 
+float y2prima(float x1, float x2,float rx1,float rx2);
 
-	/* Se verifican cuantos archivos de texto entran como parametro*/
-	
-	printf("Este programa se esta ejecutando con %d argumento(s):\n",argc-1);
-	for(i=1;i<argc;i++){
-    	printf("%s\n", argv[i]);
-  	}
-	printf("El programa se dispone a calcular la dinamica de %d galaxia(s)\n EXIT!\n", argc-1);
-	
-	input=fopen(argv[1],"r");
-    	if(!input){
-      	printf("surgió un problema abriendo el archivo\n");
-      	exit(1);
-   	 }
-	
-	/* Primero se aplica el método Runge Kutta de cuarto orden a los centros de cada galaxia y se obtiene una matriz con sus posiciones en el tiempo para despues usarse en el calculo del cambio en posicion de las estrellas*/
-	double **R;
-
-	/*Se aplica ahora el metdo Runge-Kutta de cuarto orden a las estrellas para ver sus diferentes coordenadas espaciales en el tiempo*/
-	RungeKutta(1.0,2.0,3.0,4.0,R[1][1],5) ;
-
-	fclose(input);
-
-	input=fopen(argv[2],"r");
-    	if(!input){
-      	printf("surgió un problema abriendo el archivo\n");
-      	exit(1);
-   	 }
-
-}
-
-int RungeKutta(double x_i, double vx_i, double y_i,double vy_i, double **R,int numG)
+int main(int argc, char **argv)
 {
-	/*
-		Este método se encarga de tomar las condiciones iniciales de una de las estrellas, y aplicar el metodo Runge-Kutta de cuarto orden para resolver la ecuacion diferencial del movimiento con una fuerza central. 
-		-El metodo se encarga de escribir en 5 archivos la posicion del cuerpo cuyas condicones iniciales recibe cuando pasan 1 billon de años hasta llegar a 5 billones de años. 
-		-Calcula el cambio en posicion para el numero de galaxias presentes en el archivo de condiciones iniciales.
-		-Llama las funciones y1prima y2prima que se usan en el metodo Runge-Kutta
+	int numG = 0,numE = 0;
+	float dt = 5.0/100000;
+	float Fv = 1.0226895;
+	int test,i = 0,j = 0,k,clase,it=100001;
+	float a1,a2,a3,a4,xi,vxi,yi,vyi;
+	float *x_iG,*y_iG,*Vx_iG,*Vy_iG; //Para guardar las condiciones iniciales de los centros de las galaxias
+	float *x_iE,*y_iE,*Vx_iE,*Vy_iE; //Para guardar las condiciones iniciales de las estrellas
+	float *posG_x,*posG_y,*VG_x,*VG_y;
+	float *posE_x,*posE_y,*VE_x,*VE_y;
+	
+	//Abrir el archivo con las condiciones inicales de cada partícula
+	FILE *in;
+	FILE *out;
+	in = fopen(argv[1],"r");
+	
+	//Se lee la posición de cada archivo  test = fscanf(in, "%i %f %f %f %f\n", &(clase), &(x_i), &(y_i),&(Vx_i),&(Vy_i));
+	do{
+		test = fscanf(in, "%i %f %f %f %f\n", &(clase),&(a1),&(a2),&(a3),&(a4));
+		if(clase != -1)
+		{
+			numE++;
+		}
+		else
+		{
+			numG++;
+		}
+		j++;
+	}while(test!=EOF);
+
+	if(numG>=j)
+	{	
+		numG =numG-1;
+	}
+
+	if(numE>=j)
+	{	
+		numE = numE-1;
+	}
+
+	else
+	{ 
+		numE = numE-1;
+	}
+	
+	//Arreglo donde se van a guardar las posiciones de los puntos. Se guardan solo 2 puntos para ahorrar memoria, y se imprimirá en los respectivos archivos cuando llegue a los tiempos definidos.
+
+	posG_x = malloc( (numG) * sizeof(float));
+	posG_y = malloc( (numG) * sizeof(float));
+	posE_x = malloc( (numE) * sizeof(float));
+	posE_y = malloc( (numE) * sizeof(float));
+
+	VG_x = malloc( numG * sizeof(float));
+	VG_y = malloc( numG * sizeof(float));
+	VE_x = malloc( (numE) * sizeof(float));
+	VE_y = malloc( (numE) * sizeof(float));
+							
+//Guarda las posiciones inciales de del problema
+	in = fopen(argv[1],"r");
+	j = 0;
+	i = 0;
+	do{
+			
+			test = fscanf(in, "%d %f %f %f %f", &(clase),&(xi),&(yi),&(vxi),&(vyi));
+			if(clase == -1)
+			{	
+				posG_x[i] = xi; 
+				posG_y[i] = yi;
+				VG_x[i] = vxi*Fv;
+				VG_y[i] = vyi*Fv;
+				i++;
+			}	
+			
+			if(clase != -1)
+			{
+				posE_x[j] = xi;
+				posE_y[j] = yi;
+				VE_x[j] = vxi*Fv;
+				VE_y[j] = vyi*Fv;
+				j++;				
+			}
+
+	}while(test!=EOF);
+
+	//Hacer Runge-Kutta cuarto orden
+	for(i=1;i<it;i++)
+	{
+		float kx11[numG+numE],kx12[numG+numE], kx13[numG+numE], kx14[numG+numE], kx21[numG+numE],kx22[numG+numE],kx23[numG+numE],kx24[numG+numE];
+		memset( kx11, 0,  (numG+numE) * sizeof(float));
+		memset( kx12, 0,  (numG+numE) * sizeof(float));
+		memset( kx13, 0,  (numG+numE) * sizeof(float));
+		memset( kx14, 0,  (numG+numE) * sizeof(float));
+		memset( kx21, 0,  (numG+numE) * sizeof(float));
+		memset( kx22, 0,  (numG+numE) * sizeof(float));
+		memset( kx23, 0,  (numG+numE) * sizeof(float));
+		memset( kx24, 0,  (numG+numE) * sizeof(float));
+
+		float ky11[numG+numE],ky12[numG+numE], ky13[numG+numE], ky14[numG+numE], ky21[numG+numE],ky22[numG+numE],ky23[numG+numE],ky24[numG+numE];
+		memset( ky11, 0,  (numG+numE) *sizeof(float));
+		memset( ky12, 0,  (numG+numE) *sizeof(float));
+		memset( ky13, 0,  (numG+numE) *sizeof(float));
+		memset( ky14, 0,  (numG+numE) *sizeof(float));
+		memset( ky21, 0,  (numG+numE) *sizeof(float));
+		memset( ky22, 0,  (numG+numE) *sizeof(float));
+		memset( ky23, 0,  (numG+numE) *sizeof(float));
+		memset( ky24, 0,  (numG+numE) *sizeof(float));
+
+		float promKx1[(numG+numE)],promKx2[(numG+numE)],promKy1[(numG+numE)],promKy2[(numG+numE)];
+
+		float x11[(numG+numE)],x12[(numG+numE)],x13[(numG+numE)],x14[(numG+numE)],x21[(numG+numE)],x22[(numG+numE)],x23[(numG+numE)],x24[(numG+numE)];
+		float y11[(numG+numE)],y12[(numG+numE)],y13[(numG+numE)],y14[(numG+numE)],y21[(numG+numE)],y22[(numG+numE)],y23[(numG+numE)],y24[(numG+numE)];
+
+		//HASTA AQUÍ ESTÁ BIEN	
+			
+		//Primer paso
+		for(j=0;j<numG;j++)
+		{
+			//Centros de galaxias
+			for(k=0;k<numG;k++)
+			{	
+				
+				//Cambio en posicion por la velocidad del centro de la galaxia
+				if(k==j)
+				{				
+					kx11[j] = kx11[j] + y1prima(VG_x[j]); //Para x
+					ky11[j] = ky11[j] + y1prima(VG_y[(j)]); //Para y
+				}				
+				//Aceleracion por los centros de otras galaxias
+				if(k!=j)
+				{
+					kx21[j] = kx21[j] + y2prima(posG_x[(j)],posG_y[(j)],posG_x[(k)],posG_y[(k)]); //Para x
+					ky21[j] += y2prima(posG_y[(j)],posG_x[(j)],posG_y[(k)],posG_x[(k)]); //Para y
+				}
+			}
+
+		}
 		
-	Input:
-		-x_i: Posicion inicial en el eje x
-		-y_i: Posicion inicial en el eje y
-		-vx_i: Velocidad inicial en el eje x
-		-vy_i: Velocidad inicial en el eje y
-		- R[][], Matriz donde cada columna representa una galaxia y cada fila el cambio de posicion de cada galaxia, con el mismo cambio en el tiempo que se va usar en el Runge-Kutta para las estrellas
-
-	Output:
-		Una línea en 5 archivos diferentes. Cada archivo representa el cambio en un billon de años, y la linea sera la posicion de la estrella en ese tiempo. 
-	*/
-
-	y1prima(1,1,1,1);
+		//printf("5 \n");
+		for(j=0;j<numG;j++)
+		{		
+			x11[j] = posG_x[(j)]+ (dt/2.0)*kx11[j];
+			x21[j] = VG_x[(j)] + (dt/2.0)*kx21[j];
+			y11[j] = posG_y[(j)] + (dt/2.0)*ky11[j];
+			y21[j] = VG_y[(j)] + (dt/2.0)*ky21[j];	
+		}
+		
+		//Para las estrellas
+		for(j=numG;j<(numG+numE);j++)
+		{
+			for(k=0;k<numG;k++)
+			{
+				kx11[j]+= y1prima(VE_x[(j-numG)]);
+				kx21[j]+= y2prima(posE_x[(j-numG)],posE_y[(j-numG)],posG_x[(k)],posG_y[(k)]);
+			
+				ky11[j]+= y1prima(VE_x[(j-numG)]);
+				ky21[j]+= y2prima(posE_y[(j-numG)],posE_x[(j-numG)],posG_y[(k)],posG_x[(k)]);
+			}		
+		}	
+		
+		for(j=numG;j<(numG+numE);j++)
+		{		
+			x11[j] = posE_x[(j)]+ (dt/2.0)*kx11[j];
+			x21[j] = VE_x[(j)] + (dt/2.0)*kx21[j];
+			y11[j] = posE_y[(j)] + (dt/2.0)*ky11[j];
+			y21[j] = VE_y[(j)] + (dt/2.0)*ky21[j];
+		}	
 	
-	y1prima(1,1,1,1);
+		//Segundo paso
+		for(j=0;j<numG;j++)
+		{
+			for(k=0;k<numG;k++)
+			{		
+				//Cambio en posicion por la velocidad de la galaxia
+				if(k==j)
+				{				
+					kx12[j] += y1prima(x21[j]); //Para x
+					ky12[j] += y1prima(y21[j]); //Para y
+				}				
+				//Aceleracion por los centros de otras galaxias
+				if(k!=j)
+				{
+					kx22[j] +=  y2prima(x11[j],y11[j],x11[k],y11[k]); //Para x
+					ky22[j] +=  y2prima(y11[j],x11[j],y11[k],x11[k]); //Para y
+				}
+			}
+		}
 
+		for(j=0;j<numG;j++)
+		{		
+			x12[j] = posG_x[(j)]+ (dt/2.0)*kx12[j];
+			x22[j] = VG_x[(j)] + (dt/2.0)*kx22[j];
+			y12[j] = posG_y[(j)] + (dt/2.0)*ky12[j];
+			y22[j] = VG_y[(j)] + (dt/2.0)*ky22[j];		
+		}	
+		
+		//Para las estrellas
+		for(j=numG;j<(numG+numE);j++)
+		{
+			for(k=0;k<numG;k++)
+			{
+				kx12[j]+= y1prima(x21[j]);
+				kx22[j]+= y2prima(x11[j],y11[j],x11[k],y11[k]);
+			
+				ky12[j]+= y1prima(y21[j]);
+				ky22[j]+= y2prima(y11[j],x11[j],y11[k],x11[k]);
+			}		
+		}	
+
+		for(j=numG;j<(numG+numE);j++)
+		{		
+			x12[j] = posE_x[(j)]+ (dt/2.0)*kx12[j];
+			x22[j] = VE_x[(j)] + (dt/2.0)*kx22[j];
+			y12[j] = posE_y[(j)] + (dt/2.0)*ky12[j];
+			y22[j] = VE_y[(j)] + (dt/2.0)*ky22[j];
+		}			
+		
+		//Tercer paso
+		for(j=0;j<numG;j++)
+		{
+			for(k=0;k<numG;k++)
+			{		
+				//Cambio en posicion por la velocidad de la galaxia
+				if(k==j)
+				{				
+					kx13[j] += y1prima(x22[j]); //Para x
+					ky13[j] += y1prima(y22[j]); //Para y
+				}				
+				//Aceleracion por los centros de otras galaxias
+				if(k!=j)
+				{
+					kx23[j] +=  y2prima(x12[j],y12[j],x12[k],y12[k]); //Para x
+					ky23[j] +=  y2prima(y12[j],x12[j],y12[k],x12[k]); //Para y
+				}
+			}
+		}
+
+		for(j=0;j<numG;j++)
+		{		
+			x13[j] = posG_x[(j)]+ (dt)*kx13[j];
+			x23[j] = VG_x[(j)] + (dt)*kx23[j];
+			y13[j] = posG_y[(j)] + (dt)*ky13[j];
+			y23[j] = VG_y[(j)] + (dt)*ky23[j];		
+		}	
+		
+		//Para las estrellas
+		for(j=numG;j<(numG+numE);j++)
+		{
+			for(k=0;k<numG;k++)
+			{
+				kx13[j]+= y1prima(x22[j]);
+				kx23[j]+= y2prima(x12[j],y12[j],x12[k],y12[k]);
+			
+				ky13[j]+= y1prima(y22[j]);
+				ky23[j]+= y2prima(y12[j],x12[j],y12[k],x12[k]);
+			}		
+		}	
+
+		for(j=numG;j<(numG+numE);j++)
+		{		
+			x13[j] = posE_x[(j)]+ (dt)*kx13[j];
+			x23[j] = VE_x[(j)] + (dt)*kx23[j];
+			y13[j] = posE_y[(j)] + (dt)*ky13[j];
+			y23[j] = VE_y[(j)] + (dt)*ky23[j];
+		}			
+		
+		
+		//Cuarto Paso, k4
+		//Centros de las galaxias
+		for(j=0;j<numG;j++)
+		{
+			for(k=0;k<numG;k++)
+			{		
+				//Cambio en posicion por la velocidad de la galaxia
+				if(k==j)
+				{				
+					kx14[j] += y1prima(x23[j]); //Para x
+					ky14[j] += y1prima(y23[j]); //Para y
+				}				
+				//Aceleracion por los centros de otras galaxias
+				if(k!=j)
+				{
+					kx24[j] +=  y2prima(x13[j],y13[j],x13[k],y13[k]); //Para x
+					ky24[j] +=  y2prima(y13[j],x13[j],y13[k],x13[k]); //Para y
+				}
+			}
+		}
+
+		//Estrellas		
+		for(j=numG;j<(numG+numE);j++)
+		{
+			for(k=0;k<numG;k++)
+			{
+				kx14[j]+= y1prima(x23[j]);
+				kx24[j]+= y2prima(x13[j],y13[j],x13[k],y13[k]);
+			
+				ky14[j]+= y1prima(y23[j]);
+				ky24[j]+= y2prima(y13[j],x13[j],y13[k],x13[k]);
+			}		
+		}	
+
+		//Promedio 
+		for(j=0;j<numG;j++)
+		{		
+			promKx1[j] = (1.0/6.0)*(kx11[j] + 2.0*kx12[j] + 2.0*kx13[j] + kx14[j]);
+			promKx2[j] = (1.0/6.0)*(kx21[j] + 2.0*kx22[j] + 2.0*kx23[j] + kx24[j]);
+
+			promKy1[j] = (1.0/6.0)*(ky11[j] + 2.0*ky12[j] + 2.0*ky13[j] + ky14[j]);
+			promKy2[j] = (1.0/6.0)*(ky21[j] + 2.0*ky22[j] + 2.0*ky23[j] + ky24[j]);	
+			
+			posG_x[(j)] = posG_x[(j)] + dt * promKx1[j]; 
+			VG_x[(j)] = VG_x[(j)] + dt * promKx2[j]; 
+			posG_y[(j)] = posG_y[(j)] + dt * promKy1[j];
+			VG_y[(j)] = VG_y[(j)] + dt * promKy2[j];
+
+		}
+
+		for(j=numG;j<(numG+numE);j++)
+		{		
+			promKx1[j] = (1.0/6.0)*(kx11[j] + 2.0*kx12[j] + 2.0*kx13[j] + kx14[j]);
+			promKx2[j] = (1.0/6.0)*(kx21[j] + 2.0*kx22[j] + 2.0*kx23[j] + kx24[j]);
+
+			promKy1[j] = (1.0/6.0)*(ky11[j] + 2.0*ky12[j] + 2.0*ky13[j] + ky14[j]);
+			promKy2[j] = (1.0/6.0)*(ky21[j] + 2.0*ky22[j] + 2.0*ky23[j] + ky24[j]);
+
+			posE_x[(j)-numG] = posE_x[(j)-numG] + dt * promKx1[j]; 
+			VE_x[(j)-numG] = VE_x[(j)-numG] + dt * promKx2[j]; 
+			posE_y[(j)-numG] = posE_y[(j)-numG] + dt * promKy1[j];
+			VE_y[(j)-numG] = VE_y[(j)-numG] + dt * promKy2[j];
+		}
+		
+		//Escribir los datos en un archivo de texto para graficarlos posteriormente
+		if(i==20000)
+		{	
+			char str1[50];
+			char str2[50] = "1 billon de años ";
+			sprintf(str1,"%i galaxia(s).dat",numG);
+			strcat(str2,str1);
+			out = fopen(str2,"a");	
+			for(j=0;j<numG;j++)
+			{
+				fprintf(out,"-1 %f %f \n",posG_x[(j)],posG_y[(j)]);
+			}
+			
+			for(j=numG;j<(numG+numE);j++)
+			{
+				fprintf(out,"0 %f %f \n",posE_x[(j)],posE_y[(j)]);
+			}
+		}	
+		if(i==40000)
+		{	
+			char str1[50];
+			char str2[50] = "2 billon de años ";
+			sprintf(str1,"%i galaxia(s).dat",numG);
+			strcat(str2,str1);
+			out = fopen(str2,"a");		
+			for(j=0;j<numG;j++)
+			{
+				fprintf(out,"-1 %f %f \n",posG_x[(j)],posG_y[(j)]);
+			}
+			for(j=numG;j<(numG+numE);j++)
+			{
+				fprintf(out,"0 %f %f \n",posE_x[(j)],posE_y[(j)]);
+			}
+		}
+		if(i==60000)
+		{	
+			char str1[50];
+			char str2[50] = "3 billon de años ";
+			sprintf(str1,"%i galaxia(s).dat",numG);
+			strcat(str2,str1);
+			out = fopen(str2,"a");		
+			for(j=0;j<numG;j++)
+			{
+				fprintf(out,"-1 %f %f \n",posG_x[(j)],posG_y[(j)]);
+			}
+			
+			for(j=numG;j<(numG+numE);j++)
+			{
+				fprintf(out,"0 %f %f \n",posE_x[(j)],posE_y[(j)]);
+			}
+		}
+		if(i==80000)
+		{	
+			char str1[50];
+			char str2[50] = "4 billon de años ";
+			sprintf(str1,"%i galaxia(s).dat",numG);
+			strcat(str2,str1);
+			out = fopen(str2,"a");	
+			for(j=0;j<numG;j++)
+			{
+				fprintf(out,"-1 %f %f \n",posG_x[(j)],posG_y[(j)]);
+			}
+			
+			for(j=numG;j<(numG+numE);j++)
+			{
+				fprintf(out,"0 %f %f \n",posE_x[(j)],posE_y[(j)]);
+			}
+		}
+		if(i==100000)
+		{	
+			char str1[50];
+			char str2[50] = "5 billon de años ";
+			sprintf(str1,"%i galaxia(s).dat",numG);
+			strcat(str2,str1);
+			out = fopen(str2,"a");	
+			for(j=0;j<numG;j++)
+			{
+				fprintf(out,"-1 %f %f \n",posG_x[(j)],posG_y[(j)]);
+			}
+			
+			for(j=numG;j<(numG+numE);j++)
+			{
+				fprintf(out,"0 %f %f \n",posE_x[(j)],posE_y[(j)]);
+			}
+		}		
+	}
+
+	printf("%i \n",i);
+	
 	return 0;
 }
 
+float y1prima(float V_ant)
+{
+	return V_ant;
+}
 
+float y2prima(float x1, float x2,float rx1,float rx2)
+{
+	return -4499554.0*(x1-rx1)/pow(pow(x1-rx1,2)+pow(x2-rx2,2),(1.5));
+}
 

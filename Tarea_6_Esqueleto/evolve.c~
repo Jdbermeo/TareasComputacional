@@ -74,19 +74,6 @@ int main(int argc, char **argv)
 	VE_x = malloc( (numE) * sizeof(float));
 	VE_y = malloc( (numE) * sizeof(float));
 							
-//Arreglos para guardar las condiciones iniciales 
-	
-	x_iG = malloc((numG)*sizeof(float));
-	y_iG = malloc((numG)*sizeof(float));
-	Vx_iG = malloc((numG)*sizeof(float));
-	Vy_iG = malloc((numG)*sizeof(float));
-
-	x_iE = malloc((numE)*sizeof(float));
-	y_iE = malloc((numE)*sizeof(float));
-	Vx_iE = malloc((numE)*sizeof(float));
-	Vy_iE = malloc((numE)*sizeof(float));
-
-	
 //Guarda las posiciones inciales de del problema
 	in = fopen(argv[1],"r");
 	j = 0;
@@ -114,8 +101,6 @@ int main(int argc, char **argv)
 
 	}while(test!=EOF);
 
-		int h = 0;
-		int d = 0,g=0;
 	//Hacer Runge-Kutta cuarto orden
 	for(i=1;i<it;i++)
 	{
