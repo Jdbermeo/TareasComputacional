@@ -4,9 +4,7 @@
 #include <string.h>
 
 
-#define G 4499554
-#define dt 5.0/10000
-#define Fv 1.0226895
+
 
 
 /*Definir como van a interactuar y cambiar las posiciones de los centros de masas de las dos galaxias. Con eso definido lo hecho para los otros puntos va a funcionar. Adicionalmente puede ayudar a mejorar el proceso para calcular el cambio en la poscion de los otros puntos. 
@@ -21,8 +19,10 @@ float y2prima(float x1, float x2,float rx1,float rx2);
 int main(int argc, char **argv)
 {
 	int numG = 0,numE = 0;
+	float dt = 5.0/10000;
+	float Fv = 1.0226895;
 	int test,i = 0,j = 0,k,clase,it=10001;
-	float a1,a2,a3,a4;
+	float a1,a2,a3,a4,xi,vxi,yi,vyi;
 	float *x_iG,*y_iG,*Vx_iG,*Vy_iG; //Para guardar las condiciones iniciales de los centros de las galaxias
 	float *x_iE,*y_iE,*Vx_iE,*Vy_iE; //Para guardar las condiciones iniciales de las estrellas
 	float *posG_x,*posG_y,*VG_x,*VG_y;
@@ -56,7 +56,6 @@ int main(int argc, char **argv)
 	if(numE>=j)
 	{	
 		numE = numE-1;
-		printf("%i %i %i\n",numG, numE,j-1);
 	}
 
 	else
@@ -76,12 +75,7 @@ int main(int argc, char **argv)
 	VG_y = malloc( numG * sizeof(float));
 	VE_x = malloc( numE * sizeof(float));
 	VE_y = malloc( numE * sizeof(float));
-
-	
-					
-	printf("1 \n");
-					
-
+							
 //Arreglos para guardar las condiciones iniciales 
 	
 	x_iG = malloc((numG)*sizeof(float));
@@ -94,27 +88,33 @@ int main(int argc, char **argv)
 	Vx_iE = malloc((numE)*sizeof(float));
 	Vy_iE = malloc((numE)*sizeof(float));
 
-	printf("2 \n");
+	
 //Guarda las posiciones inciales de las galaxias del problema
 	in = fopen(argv[1],"r");
+	j = 0;
 	do{
-			test = fscanf(in, "%i ", &(clase));
+			
+			test = fscanf(in, "%i %f %f %f %f", &(clase),&(xi),&(yi),&(vxi),&(vyi));
 			if(clase == -1)
 			{	
-				printf("3 \n");
-				test = fscanf(in, "%f %f %f %f\n", &(x_iG[i]), &(y_iG[i]),&(Vx_iG[i]),&(Vy_iG[i]));
-				printf("%f %f %f %f\n",x_iG[i], y_iG[i],Vx_iG[i],Vy_iG[i]);
+				x_iG[i] = xi; 
+				y_iG[i] = yi;
+				Vx_iG[i] = vxi;
+				Vy_iG[i] = vyi;
 				i++;
 			}	
 			
 			if(clase != -1)
 			{
-				test = fscanf(in, "%f %f %f %f\n", &(x_iE[j]), &(y_iE[j]),&(Vx_iE[j]),&(Vy_iE[j]));
+				x_iE[j] = xi;
+				y_iE[j] = yi;
+				Vx_iE[j] = vxi*Fv;
+				Vy_iE[j] = vyi;
 				j++;				
 			}
+
 	}while(test!=EOF);
 
-	printf("3 \n");
 		//Guarda las posiciones iniciales
 		for(i=0;i<numG;i++)
 		{
@@ -123,43 +123,46 @@ int main(int argc, char **argv)
 			VG_x[i] = Vx_iG[i]*Fv;
 			VG_y[i] = Vy_iG[i]*Fv;
 		}
-		
+	
 		for(i=0;i<numE;i++)
 		{
 			posE_x[i] = x_iE[i];
 			posE_y[i] = y_iE[i];
 			VE_x[i] = Vx_iE[i]*Fv;
 			VE_y[i] = Vy_iE[i]*Fv;
-		}		
+		}	
 
+int h = 0;
 	//Hacer Runge-Kutta cuarto orden
 	for(i=1;i<it;i++)
 	{
 		float kx11[numG+numE],kx12[numG+numE], kx13[numG+numE], kx14[numG+numE], kx21[numG+numE],kx22[numG+numE],kx23[numG+numE],kx24[numG+numE];
-		memset( kx11, 0,  numG+numE * sizeof(float));
-		memset( kx12, 0,  numG+numE * sizeof(float));
-		memset( kx13, 0,  numG+numE * sizeof(float));
-		memset( kx14, 0,  numG+numE * sizeof(float));
-		memset( kx21, 0,  numG+numE * sizeof(float));
-		memset( kx22, 0,  numG+numE * sizeof(float));
-		memset( kx23, 0,  numG+numE * sizeof(float));
-		memset( kx24, 0,  numG+numE * sizeof(float));
+		memset( kx11, 0,  (numG+numE) * sizeof(float));
+		memset( kx12, 0,  (numG+numE) * sizeof(float));
+		memset( kx13, 0,  (numG+numE) * sizeof(float));
+		memset( kx14, 0,  (numG+numE) * sizeof(float));
+		memset( kx21, 0,  (numG+numE) * sizeof(float));
+		memset( kx22, 0,  (numG+numE) * sizeof(float));
+		memset( kx23, 0,  (numG+numE) * sizeof(float));
+		memset( kx24, 0,  (numG+numE) * sizeof(float));
 
 		float ky11[numG+numE],ky12[numG+numE], ky13[numG+numE], ky14[numG+numE], ky21[numG+numE],ky22[numG+numE],ky23[numG+numE],ky24[numG+numE];
-		memset( ky11, 0,  numG+numE *sizeof(float));
-		memset( ky12, 0,  numG+numE *sizeof(float));
-		memset( ky13, 0,  numG+numE *sizeof(float));
-		memset( ky14, 0,  numG+numE *sizeof(float));
-		memset( ky21, 0,  numG+numE *sizeof(float));
-		memset( ky22, 0,  numG+numE *sizeof(float));
-		memset( ky23, 0,  numG+numE *sizeof(float));
-		memset( ky24, 0,  numG+numE *sizeof(float));
+		memset( ky11, 0,  (numG+numE) *sizeof(float));
+		memset( ky12, 0,  (numG+numE) *sizeof(float));
+		memset( ky13, 0,  (numG+numE) *sizeof(float));
+		memset( ky14, 0,  (numG+numE) *sizeof(float));
+		memset( ky21, 0,  (numG+numE) *sizeof(float));
+		memset( ky22, 0,  (numG+numE) *sizeof(float));
+		memset( ky23, 0,  (numG+numE) *sizeof(float));
+		memset( ky24, 0,  (numG+numE) *sizeof(float));
 
-		float promKx1[numG+numE],promKx2[numG+numE],promKy1[numG+numE],promKy2[numG+numE];
+		float promKx1[(numG+numE)],promKx2[(numG+numE)],promKy1[(numG+numE)],promKy2[(numG+numE)];
 
-		float x11[numG+numE],x12[numG+numE],x13[numG+numE],x14[numG+numE],x21[numG+numE],x22[numG+numE],x23[numG+numE],x24[numG+numE];
-		float y11[numG+numE],y12[numG+numE],y13[numG+numE],y14[numG+numE],y21[numG+numE],y22[numG+numE],y23[numG+numE],y24[numG+numE];
-	
+		float x11[(numG+numE)],x12[(numG+numE)],x13[(numG+numE)],x14[(numG+numE)],x21[(numG+numE)],x22[(numG+numE)],x23[(numG+numE)],x24[(numG+numE)];
+		float y11[(numG+numE)],y12[(numG+numE)],y13[(numG+numE)],y14[(numG+numE)],y21[(numG+numE)],y22[(numG+numE)],y23[(numG+numE)],y24[(numG+numE)];
+
+		//HASTA AQUÍ ESTÁ BIEN	
+			
 		//Primer paso
 		for(j=0;j<numG;j++)
 		{
@@ -170,23 +173,29 @@ int main(int argc, char **argv)
 				//Cambio en posicion por la velocidad del centro de la galaxia
 				if(k==j)
 				{				
-					kx11[j] += y1prima(VG_x[j]); //Para x
-					ky11[j] += y1prima(VG_y[(j)]); //Para y
-					if(i==0)
+					kx11[j] = kx11[j] + y1prima(VG_x[j]); //Para x
+					ky11[j] = ky11[j] + y1prima(VG_y[(j)]); //Para y
+					
+					if(h<=3)
 					{
-						printf("%f \n",kx11[j]);
+						printf("%i \n",j);
+						printf(" A imprimir %f \n",y1prima(VG_y[(j)]));
+						printf(" B imprimir %f \n",y1prima(VG_y[(j)]));
+						h++;					
 					}
 				}				
 				//Aceleracion por los centros de otras galaxias
 				if(k!=j)
 				{
-					kx21[j] += y2prima(posG_x[(j)],posG_y[(j)],posG_x[(k)],posG_y[(k)]); //Para x
+					kx21[j] = kx21[j] + y2prima(posG_x[(j)],posG_y[(j)],posG_x[(k)],posG_y[(k)]); //Para x
 					ky21[j] += y2prima(posG_y[(j)],posG_x[(j)],posG_y[(k)],posG_x[(k)]); //Para y
+					//printf(" A imprimir %f \n",kx21[j]);
 				}
 			}
 
 		}
-
+		
+		//printf("5 \n");
 		for(j=0;j<numG;j++)
 		{		
 			x11[j] = posG_x[(j)]+ (dt/2.0)*kx11[j];
@@ -207,7 +216,7 @@ int main(int argc, char **argv)
 				ky21[j]+= y2prima(posE_y[(j-numG)],posE_x[(j-numG)*2],posG_y[(k*2)],posG_x[(k*2)]);
 			}		
 		}	
-
+		
 		for(j=numG;j<(numG+numE);j++)
 		{		
 			x11[j] = posE_x[(j)]+ (dt/2.0)*kx11[j];
@@ -383,7 +392,7 @@ int main(int argc, char **argv)
 		{	
 			char str1[50];
 			char str2[50] = "1 billon de años ";
-			sprintf(str1,"%i galaxia(s).txt",numG);
+			sprintf(str1,"%i galaxia(s).dat",numG);
 			strcat(str2,str1);
 			out = fopen(str2,"a");	
 			for(j=0;j<numG;j++)
@@ -400,14 +409,13 @@ int main(int argc, char **argv)
 		{	
 			char str1[50];
 			char str2[50] = "2 billon de años ";
-			sprintf(str1,"%i galaxia(s).txt",numG);
+			sprintf(str1,"%i galaxia(s).dat",numG);
 			strcat(str2,str1);
 			out = fopen(str2,"a");		
 			for(j=0;j<numG;j++)
 			{
 				fprintf(out,"-1 %f %f \n",posG_x[(j)],posG_y[(j)]);
 			}
-			
 			for(j=numG;j<(numG+numE);j++)
 			{
 				fprintf(out,"0 %f %f \n",posE_x[(j)],posE_y[(j)]);
@@ -417,7 +425,7 @@ int main(int argc, char **argv)
 		{	
 			char str1[50];
 			char str2[50] = "3 billon de años ";
-			sprintf(str1,"%i galaxia(s).txt",numG);
+			sprintf(str1,"%i galaxia(s).dat",numG);
 			strcat(str2,str1);
 			out = fopen(str2,"a");		
 			for(j=0;j<numG;j++)
@@ -434,7 +442,7 @@ int main(int argc, char **argv)
 		{	
 			char str1[50];
 			char str2[50] = "4 billon de años ";
-			sprintf(str1,"%i galaxia(s).txt",numG);
+			sprintf(str1,"%i galaxia(s).dat",numG);
 			strcat(str2,str1);
 			out = fopen(str2,"a");	
 			for(j=0;j<numG;j++)
@@ -451,7 +459,7 @@ int main(int argc, char **argv)
 		{	
 			char str1[50];
 			char str2[50] = "5 billon de años ";
-			sprintf(str1,"%i galaxia(s).txt",numG);
+			sprintf(str1,"%i galaxia(s).dat",numG);
 			strcat(str2,str1);
 			out = fopen(str2,"a");	
 			for(j=0;j<numG;j++)
@@ -476,6 +484,6 @@ float y1prima(float V_ant)
 
 float y2prima(float x1, float x2,float rx1,float rx2)
 {
-	return -G*(rx1-x1)/(pow(pow((rx1-x1),2)+pow((rx2-x2),2),(1.5)));
+	return -4499554.0*(rx1-x1)/(pow(pow((rx1-x1),2)+pow((rx2-x2),2),(1.5)));
 }
 
