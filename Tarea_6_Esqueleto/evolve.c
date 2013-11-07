@@ -446,6 +446,6 @@ float y1prima(float V_ant)
 
 float y2prima(float x1, float x2,float rx1,float rx2)
 {
-	return -4499554.0*(x1-rx1)/pow(pow(x1-rx1,2)+pow(x2-rx2,2),(1.5));
+	return -4499554.0*(rx1-x1)/pow(pow(rx1-x1,2)+pow(rx2-x2,2),(1.5));
 }
 

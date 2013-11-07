@@ -326,10 +326,10 @@ int main(int argc, char **argv)
 			promKy1[j] = (1.0/6.0)*(ky11[j] + 2.0*ky12[j] + 2.0*ky13[j] + ky14[j]);
 			promKy2[j] = (1.0/6.0)*(ky21[j] + 2.0*ky22[j] + 2.0*ky23[j] + ky24[j]);	
 			
-			posG_x[(j)] = posG_x[(j)] + i*dt * promKx1[j]; 
-			VG_x[(j)] = VG_x[(j)] + i*dt * promKx2[j]; 
-			posG_y[(j)] = posG_y[(j)] + i*dt * promKy1[j];
-			VG_y[(j)] = VG_y[(j)] + i*dt * promKy2[j];
+			posG_x[(j)] = posG_x[(j)] + dt * promKx1[j]; 
+			VG_x[(j)] = VG_x[(j)] + dt * promKx2[j]; 
+			posG_y[(j)] = posG_y[(j)] + dt * promKy1[j];
+			VG_y[(j)] = VG_y[(j)] + dt * promKy2[j];
 
 		}
 
@@ -341,10 +341,10 @@ int main(int argc, char **argv)
 			promKy1[j] = (1.0/6.0)*(ky11[j] + 2.0*ky12[j] + 2.0*ky13[j] + ky14[j]);
 			promKy2[j] = (1.0/6.0)*(ky21[j] + 2.0*ky22[j] + 2.0*ky23[j] + ky24[j]);
 
-			posE_x[(j)-numG] = posE_x[(j)-numG] + i*dt * promKx1[j]; 
-			VE_x[(j)-numG] = VE_x[(j)-numG] + i*dt * promKx2[j]; 
-			posE_y[(j)-numG] = posE_y[(j)-numG] + i*dt * promKy1[j];
-			VE_y[(j)-numG] = VE_y[(j)-numG] + i*dt * promKy2[j];
+			posE_x[(j)-numG] = posE_x[(j)-numG] + dt * promKx1[j]; 
+			VE_x[(j)-numG] = VE_x[(j)-numG] + dt * promKx2[j]; 
+			posE_y[(j)-numG] = posE_y[(j)-numG] + dt * promKy1[j];
+			VE_y[(j)-numG] = VE_y[(j)-numG] + dt * promKy2[j];
 		}
 		
 		//Escribir los datos en un archivo de texto para graficarlos posteriormente
@@ -446,6 +446,6 @@ float y1prima(float V_ant)
 
 float y2prima(float x1, float x2,float rx1,float rx2)
 {
-	return -4499554.0*(x1-rx1)/pow(pow(x1-rx1,2)+pow(x2-rx2,2),(1.5));
+	return -4499554.0*(rx1-x1)/pow(pow(rx1-x1,2)+pow(rx2-x2,2),(1.5));
 }
 

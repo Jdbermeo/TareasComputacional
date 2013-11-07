@@ -37,18 +37,16 @@ def Cargar_Datos():
 files = glob.glob('*.dat')
 files
 for i in range(len(files)):
-    print files[-i-1]
+	print files[-i-1]
 files
 
 for i in range(len(files)):
-    archivo1=np.loadtxt(open(files[-i-1],"r"))
+	archivo1=np.loadtxt(open(files[-i-1],"r"))
+	for j in range (len(archivo1[:])):       
+		plt.scatter(archivo1[:,1],archivo1[:,2])
     
-    for j in range (len(archivo1[:])):
-       
-        
-        plt.scatter(archivo1[j][2],archivo1[j][1])
-    plt.show()
-    plt.close()
+		plt.show()
+    		plt.close()
            
 
 

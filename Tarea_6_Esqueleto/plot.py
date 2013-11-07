@@ -42,11 +42,9 @@ files
 
 for i in range(len(files)):
 	archivo1=np.loadtxt(open(files[-i-1],"r"))
-	for j in range (len(archivo1[:])):       
-		plt.scatter(archivo1[j][2],archivo1[j][1])
-    
-		plt.show()
-    		plt.close()
+	plt.scatter(archivo1[:,1],archivo1[:,2])
+	plt.show()
+    	plt.close()
            
 
 
