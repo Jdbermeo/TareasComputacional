@@ -7,30 +7,22 @@
 #define G 4499554
 #define dt 5.0/10000
 #define Fv 1.0226895
-#define it 10001
+#define it 10001.0
 
 /*Definir como van a interactuar y cambiar las posiciones de los centros de masas de las dos galaxias. Con eso definido lo hecho para los otros puntos va a funcionar. Adicionalmente puede ayudar a mejorar el proceso para calcular el cambio en la poscion de los otros puntos. 
 
 */
 
-<<<<<<< HEAD
+
 double y1prima(float V_ant)
 {
 	return 	V_ant;
 }
 
 double y2prima(float x1, float x2,float rx1,float rx2)
-=======
-double y1prima(double t,double x, double y, double vx,double vy,double rx,double ry)
-{
-	return 	-4.4973*(10**15)*(x-rx);
-}
-
-double y2prima(double t,double y1,double y2)
->>>>>>> 900585269b26f564ca17ec6651527c1566ababbd
 {
 	
-	return 	-G*(x1-rx1)/(pow(pow((x1-rx1),2)+pow((x2-rx2),2),(1.5)));
+	return 	-G*(rx1-x1)/(pow(pow((rx1-x1),2)+pow((rx2-x2),2),(1.5)));
 }
 
 int main(int argc, char **argv)
@@ -77,7 +69,7 @@ int main(int argc, char **argv)
 		numE = numE-1;
 		printf("%i %i %i\n",numG, numE,j-1);
 	}
-
+	
 	//Arreglo donde se van a guardar las posiciones de los puntos. Se guardan solo 2 puntos para ahorrar memoria, y se imprimirá en los respectivos archivos cuando llegue a los tiempos definidos.
 
 	posG_x = malloc(2 * numG * sizeof(float));

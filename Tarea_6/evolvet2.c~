@@ -7,28 +7,21 @@
 #define G 4499554
 #define dt 5.0/10000
 #define Fv 1.0226895
-#define it 10001.0
+
 
 /*Definir como van a interactuar y cambiar las posiciones de los centros de masas de las dos galaxias. Con eso definido lo hecho para los otros puntos va a funcionar. Adicionalmente puede ayudar a mejorar el proceso para calcular el cambio en la poscion de los otros puntos. 
 
 */
 
 
-double y1prima(float V_ant)
-{
-	return 	V_ant;
-}
+float y1prima(float V_ant);
 
-double y2prima(float x1, float x2,float rx1,float rx2)
-{
-	
-	return 	-G*(rx1-x1)/(pow(pow((rx1-x1),2)+pow((rx2-x2),2),(1.5)));
-}
+float y2prima(float x1, float x2,float rx1,float rx2);
 
 int main(int argc, char **argv)
 {
 	int numG = 0,numE = 0;
-	int test,i = 0,j = 0,k,clase;
+	int test,i = 0,j = 0,k,clase,it=10001;
 	float a1,a2,a3,a4;
 	float *x_iG,*y_iG,*Vx_iG,*Vy_iG; //Para guardar las condiciones iniciales de los centros de las galaxias
 	float *x_iE,*y_iE,*Vx_iE,*Vy_iE; //Para guardar las condiciones iniciales de las estrellas
@@ -59,30 +52,35 @@ int main(int argc, char **argv)
 		numG =numG-1;
 		printf("%i %i %i\n",numG, numE,j-1);
 	}
+
 	if(numE>=j)
 	{	
 		numE = numE-1;
 		printf("%i %i %i\n",numG, numE,j-1);
 	}
+
 	else
 	{ 
 		numE = numE-1;
 		printf("%i %i %i\n",numG, numE,j-1);
 	}
 	
-	printf("%i %i\n",numG,numE);	
-
 	//Arreglo donde se van a guardar las posiciones de los puntos. Se guardan solo 2 puntos para ahorrar memoria, y se imprimirá en los respectivos archivos cuando llegue a los tiempos definidos.
 
-	posG_x = malloc(2 * numG * sizeof(float));
-	posG_y = malloc(2 * numG * sizeof(float));
-	posE_x = malloc(2 * numE * sizeof(float));
-	posE_y = malloc(2 * numE * sizeof(float));
+	posG_x = malloc( numG * sizeof(float));
+	posG_y = malloc( numG * sizeof(float));
+	posE_x = malloc( numE * sizeof(float));
+	posE_y = malloc( numE * sizeof(float));
 
-	VG_x = malloc(2 * numG * sizeof(float));
-	VG_y = malloc(2 * numG * sizeof(float));
-	VE_x = malloc(2 * numE * sizeof(float));
-	VE_y = malloc(2 * numE * sizeof(float));
+	VG_x = malloc( numG * sizeof(float));
+	VG_y = malloc( numG * sizeof(float));
+	VE_x = malloc( numE * sizeof(float));
+	VE_y = malloc( numE * sizeof(float));
+
+	
+					
+	printf("1 \n");
+					
 
 //Arreglos para guardar las condiciones iniciales 
 	
@@ -96,12 +94,16 @@ int main(int argc, char **argv)
 	Vx_iE = malloc((numE)*sizeof(float));
 	Vy_iE = malloc((numE)*sizeof(float));
 
+	printf("2 \n");
 //Guarda las posiciones inciales de las galaxias del problema
+	in = fopen(argv[1],"r");
 	do{
 			test = fscanf(in, "%i ", &(clase));
 			if(clase == -1)
-			{
+			{	
+				printf("3 \n");
 				test = fscanf(in, "%f %f %f %f\n", &(x_iG[i]), &(y_iG[i]),&(Vx_iG[i]),&(Vy_iG[i]));
+				printf("%f %f %f %f\n",x_iG[i], y_iG[i],Vx_iG[i],Vy_iG[i]);
 				i++;
 			}	
 			
@@ -112,35 +114,22 @@ int main(int argc, char **argv)
 			}
 	}while(test!=EOF);
 
-	//Calcula el cambio en la posición del centro de las galaxias de acuerdo al numero de galaxias que hayan.
-	if(numG==1)
-	{
-		for(i=1;i<=(numG+numE);i++)
-		{
-			//Dado que la velocidad se mantiene constante, solo se multiplica el cambio de tiempo por el cambio en tiempo.
-			posG_x[i] = posG_x[i-1]+ i*dt*Vx_iG[0]*Fv;
-			posG_y[i] = posG_y[i-1]+ i*dt*Vy_iG[0]*Fv;	
-		}
-	}
-
-	if(numG>1)
-	{
-	
+	printf("3 \n");
 		//Guarda las posiciones iniciales
 		for(i=0;i<numG;i++)
 		{
-			posG_x[i*2] = x_iG[i];
-			posG_y[i*2] = y_iG[i];
-			VG_x[i*2] = Vx_iG[i]*Fv;
-			VG_y[i*2] = Vy_iG[i]*Fv;
+			posG_x[i] = x_iG[i];
+			posG_y[i] = y_iG[i];
+			VG_x[i] = Vx_iG[i]*Fv;
+			VG_y[i] = Vy_iG[i]*Fv;
 		}
 		
 		for(i=0;i<numE;i++)
 		{
-			posE_x[i*2] = x_iE[i];
-			posE_y[i*2] = y_iE[i];
-			VE_x[i*2] = Vx_iE[i]*Fv;
-			VE_y[i*2] = Vy_iE[i]*Fv;
+			posE_x[i] = x_iE[i];
+			posE_y[i] = y_iE[i];
+			VE_x[i] = Vx_iE[i]*Fv;
+			VE_y[i] = Vy_iE[i]*Fv;
 		}		
 
 	//Hacer Runge-Kutta cuarto orden
@@ -181,24 +170,29 @@ int main(int argc, char **argv)
 				//Cambio en posicion por la velocidad del centro de la galaxia
 				if(k==j)
 				{				
-					kx11[j] += y1prima(VG_x[j*2]); //Para x
-					ky11[j] += y1prima(VG_y[(j*2)]); //Para y
+					kx11[j] += y1prima(VG_x[j]); //Para x
+					ky11[j] += y1prima(VG_y[(j)]); //Para y
+					if(i==0)
+					{
+						printf("%f \n",kx11[j]);
+					}
 				}				
 				//Aceleracion por los centros de otras galaxias
 				if(k!=j)
 				{
-					kx21[j] += y2prima(posG_x[(j*2)],posG_y[(j*2)],posG_x[(k*2)],posG_y[(k*2)]); //Para x
-					ky21[j] += y2prima(posG_y[(j*2)],posG_x[(j*2)],posG_y[(k*2)],posG_x[(k*2)]); //Para y
+					kx21[j] += y2prima(posG_x[(j)],posG_y[(j)],posG_x[(k)],posG_y[(k)]); //Para x
+					ky21[j] += y2prima(posG_y[(j)],posG_x[(j)],posG_y[(k)],posG_x[(k)]); //Para y
 				}
+			}
 
 		}
 
 		for(j=0;j<numG;j++)
 		{		
-			x11[j] = posG_x[(j*2)]+ (dt/2.0)*kx11[j];
-			x21[j] = VG_x[(j*2)] + (dt/2.0)*kx21[j];
-			y11[j] = posG_y[(j*2)] + (dt/2.0)*ky11[j];
-			y21[j] = VG_y[(j*2)] + (dt/2.0)*ky21[j];		
+			x11[j] = posG_x[(j)]+ (dt/2.0)*kx11[j];
+			x21[j] = VG_x[(j)] + (dt/2.0)*kx21[j];
+			y11[j] = posG_y[(j)] + (dt/2.0)*ky11[j];
+			y21[j] = VG_y[(j)] + (dt/2.0)*ky21[j];		
 		}
 		
 		//Para las estrellas
@@ -206,20 +200,20 @@ int main(int argc, char **argv)
 		{
 			for(k=0;k<numG;k++)
 			{
-				kx11[j]+= y1prima(VE_x[(j-numG)*2]);
-				kx21[j]+= y2prima(posE_x[(j-numG)*2],posE_y[(j-numG)*2],posG_x[(k*2)],posG_y[(k*2)]);
+				kx11[j]+= y1prima(VE_x[(j-numG)]);
+				kx21[j]+= y2prima(posE_x[(j-numG)],posE_y[(j-numG)*2],posG_x[(k*2)],posG_y[(k*2)]);
 			
-				ky11[j]+= y1prima(VE_x[(j-numG)*2]);
-				ky21[j]+= y2prima(posE_y[(j-numG)*2],posE_x[(j-numG)*2],posG_y[(k*2)],posG_x[(k*2)]);
+				ky11[j]+= y1prima(VE_x[(j-numG)]);
+				ky21[j]+= y2prima(posE_y[(j-numG)],posE_x[(j-numG)*2],posG_y[(k*2)],posG_x[(k*2)]);
 			}		
 		}	
 
 		for(j=numG;j<(numG+numE);j++)
 		{		
-			x11[j] = posE_x[(j*2)]+ (dt/2.0)*kx11[j];
-			x21[j] = VE_x[(j*2)] + (dt/2.0)*kx21[j];
-			y11[j] = posE_y[(j*2)] + (dt/2.0)*ky11[j];
-			y21[j] = VE_y[(j*2)] + (dt/2.0)*ky21[j];
+			x11[j] = posE_x[(j)]+ (dt/2.0)*kx11[j];
+			x21[j] = VE_x[(j)] + (dt/2.0)*kx21[j];
+			y11[j] = posE_y[(j)] + (dt/2.0)*ky11[j];
+			y21[j] = VE_y[(j)] + (dt/2.0)*ky21[j];
 		}	
 	
 		//Segundo paso
@@ -244,10 +238,10 @@ int main(int argc, char **argv)
 
 		for(j=0;j<numG;j++)
 		{		
-			x12[j] = posG_x[(j*2)]+ (dt/2.0)*kx12[j];
-			x22[j] = VG_x[(j*2)] + (dt/2.0)*kx22[j];
-			y12[j] = posG_y[(j*2)] + (dt/2.0)*ky12[j];
-			y22[j] = VG_y[(j*2)] + (dt/2.0)*ky22[j];		
+			x12[j] = posG_x[(j)]+ (dt/2.0)*kx12[j];
+			x22[j] = VG_x[(j)] + (dt/2.0)*kx22[j];
+			y12[j] = posG_y[(j)] + (dt/2.0)*ky12[j];
+			y22[j] = VG_y[(j)] + (dt/2.0)*ky22[j];		
 		}	
 		
 		//Para las estrellas
@@ -265,10 +259,10 @@ int main(int argc, char **argv)
 
 		for(j=numG;j<(numG+numE);j++)
 		{		
-			x12[j] = posE_x[(j*2)]+ (dt/2.0)*kx12[j];
-			x22[j] = VE_x[(j*2)] + (dt/2.0)*kx22[j];
-			y12[j] = posE_y[(j*2)] + (dt/2.0)*ky12[j];
-			y22[j] = VE_y[(j*2)] + (dt/2.0)*ky22[j];
+			x12[j] = posE_x[(j)]+ (dt/2.0)*kx12[j];
+			x22[j] = VE_x[(j)] + (dt/2.0)*kx22[j];
+			y12[j] = posE_y[(j)] + (dt/2.0)*ky12[j];
+			y22[j] = VE_y[(j)] + (dt/2.0)*ky22[j];
 		}			
 		
 		//Tercer paso
@@ -293,10 +287,10 @@ int main(int argc, char **argv)
 
 		for(j=0;j<numG;j++)
 		{		
-			x13[j] = posG_x[(j*2)]+ (dt)*kx13[j];
-			x23[j] = VG_x[(j*2)] + (dt)*kx23[j];
-			y13[j] = posG_y[(j*2)] + (dt)*ky13[j];
-			y23[j] = VG_y[(j*2)] + (dt)*ky23[j];		
+			x13[j] = posG_x[(j)]+ (dt)*kx13[j];
+			x23[j] = VG_x[(j)] + (dt)*kx23[j];
+			y13[j] = posG_y[(j)] + (dt)*ky13[j];
+			y23[j] = VG_y[(j)] + (dt)*ky23[j];		
 		}	
 		
 		//Para las estrellas
@@ -314,10 +308,10 @@ int main(int argc, char **argv)
 
 		for(j=numG;j<(numG+numE);j++)
 		{		
-			x13[j] = posE_x[(j*2)]+ (dt)*kx13[j];
-			x23[j] = VE_x[(j*2)] + (dt)*kx23[j];
-			y13[j] = posE_y[(j*2)] + (dt)*ky13[j];
-			y23[j] = VE_y[(j*2)] + (dt)*ky23[j];
+			x13[j] = posE_x[(j)]+ (dt)*kx13[j];
+			x23[j] = VE_x[(j)] + (dt)*kx23[j];
+			y13[j] = posE_y[(j)] + (dt)*ky13[j];
+			y23[j] = VE_y[(j)] + (dt)*ky23[j];
 		}			
 		
 		
@@ -364,10 +358,10 @@ int main(int argc, char **argv)
 			promKy1[j] = (1.0/6.0)*(ky11[j] + 2.0*ky12[j] + 2.0*ky13[j] + ky14[j]);
 			promKy2[j] = (1.0/6.0)*(ky21[j] + 2.0*ky22[j] + 2.0*ky23[j] + ky24[j]);
 
-			posG_x[(j*2)] = posG_x[(j*2)] + i*dt * promKx1[j]; 
-			VG_x[(j*2)] = VG_x[(j*2)] + i*dt * promKx2[j]; 
-			posG_y[(j*2)] = posG_y[(j*2)] + i*dt * promKy1[j];
-			VG_y[(j*2)] = VG_y[(j*2)] + i*dt * promKy2[j];
+			posG_x[(j)] = posG_x[(j)] + i*dt * promKx1[j]; 
+			VG_x[(j)] = VG_x[(j)] + i*dt * promKx2[j]; 
+			posG_y[(j)] = posG_y[(j)] + i*dt * promKy1[j];
+			VG_y[(j)] = VG_y[(j)] + i*dt * promKy2[j];
 		}
 
 		for(j=numG;j<(numG+numE);j++)
@@ -378,10 +372,10 @@ int main(int argc, char **argv)
 			promKy1[j] = (1.0/6.0)*(ky11[j] + 2.0*ky12[j] + 2.0*ky13[j] + ky14[j]);
 			promKy2[j] = (1.0/6.0)*(ky21[j] + 2.0*ky22[j] + 2.0*ky23[j] + ky24[j]);
 
-			posE_x[(j*2)-numG] = posE_x[(j*2)-numG] + i*dt * promKx1[j]; 
-			VE_x[(j*2)-numG] = VE_x[(j*2)-numG] + i*dt * promKx2[j]; 
-			posE_y[(j*2)-numG] = posE_y[(j*2)-numG] + i*dt * promKy1[j];
-			VE_y[(j*2)-numG] = VE_y[(j*2)-numG] + i*dt * promKy2[j];
+			posE_x[(j)-numG] = posE_x[(j)-numG] + i*dt * promKx1[j]; 
+			VE_x[(j)-numG] = VE_x[(j)-numG] + i*dt * promKx2[j]; 
+			posE_y[(j)-numG] = posE_y[(j)-numG] + i*dt * promKy1[j];
+			VE_y[(j)-numG] = VE_y[(j)-numG] + i*dt * promKy2[j];
 		}
 		
 		//Escribir los datos en un archivo de texto para graficarlos posteriormente
@@ -394,12 +388,12 @@ int main(int argc, char **argv)
 			out = fopen(str2,"a");	
 			for(j=0;j<numG;j++)
 			{
-				fprintf(out,"-1 %f %f \n",posG_x[(j*2)],posG_y[(j*2)]);
+				fprintf(out,"-1 %f %f \n",posG_x[(j)],posG_y[(j)]);
 			}
 			
 			for(j=numG;j<(numG+numE);j++)
 			{
-				fprintf(out,"0 %f %f \n",posE_x[(j*2)],posE_y[(j*2)]);
+				fprintf(out,"0 %f %f \n",posE_x[(j)],posE_y[(j)]);
 			}
 		}	
 		if(i*dt==2)
@@ -411,12 +405,12 @@ int main(int argc, char **argv)
 			out = fopen(str2,"a");		
 			for(j=0;j<numG;j++)
 			{
-				fprintf(out,"-1 %f %f \n",posG_x[(j*2)],posG_y[(j*2)]);
+				fprintf(out,"-1 %f %f \n",posG_x[(j)],posG_y[(j)]);
 			}
 			
 			for(j=numG;j<(numG+numE);j++)
 			{
-				fprintf(out,"0 %f %f \n",posE_x[(j*2)],posE_y[(j*2)]);
+				fprintf(out,"0 %f %f \n",posE_x[(j)],posE_y[(j)]);
 			}
 		}
 		if(i*dt==3)
@@ -428,12 +422,12 @@ int main(int argc, char **argv)
 			out = fopen(str2,"a");		
 			for(j=0;j<numG;j++)
 			{
-				fprintf(out,"-1 %f %f \n",posG_x[(j*2)],posG_y[(j*2)]);
+				fprintf(out,"-1 %f %f \n",posG_x[(j)],posG_y[(j)]);
 			}
 			
 			for(j=numG;j<(numG+numE);j++)
 			{
-				fprintf(out,"0 %f %f \n",posE_x[(j*2)],posE_y[(j*2)]);
+				fprintf(out,"0 %f %f \n",posE_x[(j)],posE_y[(j)]);
 			}
 		}
 		if(i*dt==4)
@@ -445,12 +439,12 @@ int main(int argc, char **argv)
 			out = fopen(str2,"a");	
 			for(j=0;j<numG;j++)
 			{
-				fprintf(out,"-1 %f %f \n",posG_x[(j*2)],posG_y[(j*2)]);
+				fprintf(out,"-1 %f %f \n",posG_x[(j)],posG_y[(j)]);
 			}
 			
 			for(j=numG;j<(numG+numE);j++)
 			{
-				fprintf(out,"0 %f %f \n",posE_x[(j*2)],posE_y[(j*2)]);
+				fprintf(out,"0 %f %f \n",posE_x[(j)],posE_y[(j)]);
 			}
 		}
 		if(i*dt==5)
@@ -462,22 +456,26 @@ int main(int argc, char **argv)
 			out = fopen(str2,"a");	
 			for(j=0;j<numG;j++)
 			{
-				fprintf(out,"-1 %f %f \n",posG_x[(j*2)],posG_y[(j*2)]);
+				fprintf(out,"-1 %f %f \n",posG_x[(j)],posG_y[(j)]);
 			}
 			
 			for(j=numG;j<(numG+numE);j++)
 			{
-				fprintf(out,"0 %f %f \n",posE_x[(j*2)],posE_y[(j*2)]);
+				fprintf(out,"0 %f %f \n",posE_x[(j)],posE_y[(j)]);
 			}
 		}		
 	}
-
-	}
-	}
-	else
-	{
-		printf("El archivo de condiciones iniciales no contiene el centro de la galaxia");
-	}
-
+	
 	return 0;
 }
+
+float y1prima(float V_ant)
+{
+	return V_ant;
+}
+
+float y2prima(float x1, float x2,float rx1,float rx2)
+{
+	return -G*(rx1-x1)/(pow(pow((rx1-x1),2)+pow((rx2-x2),2),(1.5)));
+}
+
