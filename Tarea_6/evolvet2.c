@@ -50,7 +50,6 @@ int main(int argc, char **argv)
 	if(numG>=j)
 	{	
 		numG =numG-1;
-		printf("%i %i %i\n",numG, numE,j-1);
 	}
 
 	if(numE>=j)
@@ -61,20 +60,19 @@ int main(int argc, char **argv)
 	else
 	{ 
 		numE = numE-1;
-		printf("%i %i %i\n",numG, numE,j-1);
 	}
 	
 	//Arreglo donde se van a guardar las posiciones de los puntos. Se guardan solo 2 puntos para ahorrar memoria, y se imprimirá en los respectivos archivos cuando llegue a los tiempos definidos.
 
-	posG_x = malloc( numG * sizeof(float));
-	posG_y = malloc( numG * sizeof(float));
-	posE_x = malloc( numE * sizeof(float));
-	posE_y = malloc( numE * sizeof(float));
+	posG_x = malloc( (numG) * sizeof(float));
+	posG_y = malloc( (numG) * sizeof(float));
+	posE_x = malloc( (numE) * sizeof(float));
+	posE_y = malloc( (numE) * sizeof(float));
 
 	VG_x = malloc( numG * sizeof(float));
 	VG_y = malloc( numG * sizeof(float));
-	VE_x = malloc( numE * sizeof(float));
-	VE_y = malloc( numE * sizeof(float));
+	VE_x = malloc( (numE) * sizeof(float));
+	VE_y = malloc( (numE) * sizeof(float));
 							
 //Arreglos para guardar las condiciones iniciales 
 	
@@ -89,34 +87,36 @@ int main(int argc, char **argv)
 	Vy_iE = malloc((numE)*sizeof(float));
 
 	
-//Guarda las posiciones inciales de las galaxias del problema
+//Guarda las posiciones inciales de del problema
 	in = fopen(argv[1],"r");
 	j = 0;
+	i = 0;
 	do{
 			
-			test = fscanf(in, "%i %f %f %f %f", &(clase),&(xi),&(yi),&(vxi),&(vyi));
+			test = fscanf(in, "%d %f %f %f %f", &(clase),&(xi),&(yi),&(vxi),&(vyi));
 			if(clase == -1)
 			{	
-				x_iG[i] = xi; 
-				y_iG[i] = yi;
-				Vx_iG[i] = vxi;
-				Vy_iG[i] = vyi;
+				posG_x[i] = xi; 
+				posG_y[i] = yi;
+				VG_x[i] = vxi*Fv;
+				VG_y[i] = vyi*Fv;
 				i++;
 			}	
 			
 			if(clase != -1)
 			{
-				x_iE[j] = xi;
-				y_iE[j] = yi;
-				Vx_iE[j] = vxi*Fv;
-				Vy_iE[j] = vyi;
+				posE_x[j] = xi;
+				posE_y[j] = yi;
+				VE_x[j] = vxi*Fv;
+				VE_y[j] = vyi*Fv;
 				j++;				
 			}
 
 	}while(test!=EOF);
+	printf("i %i j %i \n",i,j); 
 
 		//Guarda las posiciones iniciales
-		for(i=0;i<numG;i++)
+		/*for(i=0;i<numG;i++)
 		{
 			posG_x[i] = x_iG[i];
 			posG_y[i] = y_iG[i];
@@ -130,9 +130,12 @@ int main(int argc, char **argv)
 			posE_y[i] = y_iE[i];
 			VE_x[i] = Vx_iE[i]*Fv;
 			VE_y[i] = Vy_iE[i]*Fv;
-		}	
+		}*/	
+		printf("%f  \n",posE_x[54]);
+		printf("%f  \n",VE_y[54]);
 
-int h = 0;
+		int h = 0;
+		int d = 0,g=0;
 	//Hacer Runge-Kutta cuarto orden
 	for(i=1;i<it;i++)
 	{
@@ -175,21 +178,12 @@ int h = 0;
 				{				
 					kx11[j] = kx11[j] + y1prima(VG_x[j]); //Para x
 					ky11[j] = ky11[j] + y1prima(VG_y[(j)]); //Para y
-					
-					if(h<=3)
-					{
-						printf("%i \n",j);
-						printf(" A imprimir %f \n",y1prima(VG_y[(j)]));
-						printf(" B imprimir %f \n",y1prima(VG_x[(j)]));
-						h++;					
-					}
 				}				
 				//Aceleracion por los centros de otras galaxias
 				if(k!=j)
 				{
 					kx21[j] = kx21[j] + y2prima(posG_x[(j)],posG_y[(j)],posG_x[(k)],posG_y[(k)]); //Para x
 					ky21[j] += y2prima(posG_y[(j)],posG_x[(j)],posG_y[(k)],posG_x[(k)]); //Para y
-					//printf(" A imprimir %f \n",kx21[j]);
 				}
 			}
 
@@ -201,7 +195,7 @@ int h = 0;
 			x11[j] = posG_x[(j)]+ (dt/2.0)*kx11[j];
 			x21[j] = VG_x[(j)] + (dt/2.0)*kx21[j];
 			y11[j] = posG_y[(j)] + (dt/2.0)*ky11[j];
-			y21[j] = VG_y[(j)] + (dt/2.0)*ky21[j];		
+			y21[j] = VG_y[(j)] + (dt/2.0)*ky21[j];	
 		}
 		
 		//Para las estrellas
@@ -210,10 +204,10 @@ int h = 0;
 			for(k=0;k<numG;k++)
 			{
 				kx11[j]+= y1prima(VE_x[(j-numG)]);
-				kx21[j]+= y2prima(posE_x[(j-numG)],posE_y[(j-numG)*2],posG_x[(k*2)],posG_y[(k*2)]);
+				kx21[j]+= y2prima(posE_x[(j-numG)],posE_y[(j-numG)],posG_x[(k)],posG_y[(k)]);
 			
 				ky11[j]+= y1prima(VE_x[(j-numG)]);
-				ky21[j]+= y2prima(posE_y[(j-numG)],posE_x[(j-numG)*2],posG_y[(k*2)],posG_x[(k*2)]);
+				ky21[j]+= y2prima(posE_y[(j-numG)],posE_x[(j-numG)],posG_y[(k)],posG_x[(k)]);
 			}		
 		}	
 		
@@ -359,18 +353,19 @@ int h = 0;
 		}	
 
 		//Promedio 
-		for(j=0;j<(numG);j++)
+		for(j=0;j<numG;j++)
 		{		
 			promKx1[j] = (1.0/6.0)*(kx11[j] + 2.0*kx12[j] + 2.0*kx13[j] + kx14[j]);
 			promKx2[j] = (1.0/6.0)*(kx21[j] + 2.0*kx22[j] + 2.0*kx23[j] + kx24[j]);
 
 			promKy1[j] = (1.0/6.0)*(ky11[j] + 2.0*ky12[j] + 2.0*ky13[j] + ky14[j]);
-			promKy2[j] = (1.0/6.0)*(ky21[j] + 2.0*ky22[j] + 2.0*ky23[j] + ky24[j]);
-
+			promKy2[j] = (1.0/6.0)*(ky21[j] + 2.0*ky22[j] + 2.0*ky23[j] + ky24[j]);	
+			
 			posG_x[(j)] = posG_x[(j)] + i*dt * promKx1[j]; 
 			VG_x[(j)] = VG_x[(j)] + i*dt * promKx2[j]; 
 			posG_y[(j)] = posG_y[(j)] + i*dt * promKy1[j];
 			VG_y[(j)] = VG_y[(j)] + i*dt * promKy2[j];
+
 		}
 
 		for(j=numG;j<(numG+numE);j++)
@@ -388,7 +383,7 @@ int h = 0;
 		}
 		
 		//Escribir los datos en un archivo de texto para graficarlos posteriormente
-		if(i*dt==1)
+		if(i==2000)
 		{	
 			char str1[50];
 			char str2[50] = "1 billon de años ";
@@ -405,7 +400,7 @@ int h = 0;
 				fprintf(out,"0 %f %f \n",posE_x[(j)],posE_y[(j)]);
 			}
 		}	
-		if(i*dt==2)
+		if(i==4000)
 		{	
 			char str1[50];
 			char str2[50] = "2 billon de años ";
@@ -421,7 +416,7 @@ int h = 0;
 				fprintf(out,"0 %f %f \n",posE_x[(j)],posE_y[(j)]);
 			}
 		}
-		if(i*dt==3)
+		if(i==6000)
 		{	
 			char str1[50];
 			char str2[50] = "3 billon de años ";
@@ -438,7 +433,7 @@ int h = 0;
 				fprintf(out,"0 %f %f \n",posE_x[(j)],posE_y[(j)]);
 			}
 		}
-		if(i*dt==4)
+		if(i==8000)
 		{	
 			char str1[50];
 			char str2[50] = "4 billon de años ";
@@ -455,7 +450,7 @@ int h = 0;
 				fprintf(out,"0 %f %f \n",posE_x[(j)],posE_y[(j)]);
 			}
 		}
-		if(i*dt==5)
+		if(i==10000)
 		{	
 			char str1[50];
 			char str2[50] = "5 billon de años ";
@@ -473,6 +468,8 @@ int h = 0;
 			}
 		}		
 	}
+
+	printf("%i \n",i);
 	
 	return 0;
 }
@@ -484,6 +481,6 @@ float y1prima(float V_ant)
 
 float y2prima(float x1, float x2,float rx1,float rx2)
 {
-	return -4499554.0*(rx1-x1)/(pow(pow((rx1-x1),2)+pow((rx2-x2),2),(1.5)));
+	return -4499554.0*(x1-rx1)/pow(pow(x1-rx1,2)+pow(x2-rx2,2),(1.5));
 }
 
