@@ -13,6 +13,7 @@ data = loadtxt("datos.dat")
 y_obs = data[3:,1]
 x_obs = data[3:,0]
 
+print len(x_obs)
 
 alfa_walk = empty((0)) #this is an empty list to keep all the steps
 beta_walk = empty((0)) 
