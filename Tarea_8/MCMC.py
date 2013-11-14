@@ -7,7 +7,7 @@ import moduloT8 as mt
 numPunRK = 200
 n_iterations = 2000
 sigma = 0.1
-intento = 1
+intento = 2
 
 data = loadtxt("datos.dat")
 y_obs = data[3:,1]
