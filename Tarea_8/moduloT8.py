@@ -84,79 +84,79 @@ def graficar(x_obs,y_obs,alfa,beta,km1,km2,S,numIntento,chi):
 
 #Scatter Plots
 	scatter(alfa,beta)
-	savefig('intento No' + str(numIntento)+ ' alfa y beta .png')
+	savefig('intento No ' + str(numIntento)+ ' alfa y beta .png')
 	plt.show()
 	plt.close()
 
 	scatter(alfa,km1)
-	savefig('intento No' + str(numIntento)+ 'alfa y km1.png')
+	savefig('intento No ' + str(numIntento)+ ' alfa y km1.png')
 	plt.show()
 	plt.close()	
 
 	scatter(alfa,km2)
-	savefig('intento No' + str(numIntento)+ 'alfa y km2.png')
+	savefig('intento No ' + str(numIntento)+ ' alfa y km2.png')
 	plt.show()
 	plt.close()
 
 	scatter(alfa,S)
-	savefig('intento No' + str(numIntento)+ 'alfa y S.png')
+	savefig('intento No ' + str(numIntento)+ ' alfa y S.png')
 	plt.show()
 	plt.close()
 
 	scatter(beta,km1)
-	savefig('intento No' + str(numIntento)+ 'beta y km1.png')
+	savefig('intento No ' + str(numIntento)+ ' beta y km1.png')
 	plt.show()
 	plt.close()
 
 	scatter(beta,km2)
-	savefig('intento No' + str(numIntento)+ 'beta y km2.png')
+	savefig('intento No ' + str(numIntento)+ ' beta y km2.png')
 	plt.show()
 	plt.close()		
 
 	scatter(beta,S)
-	savefig('intento No' + str(numIntento)+ 'beta y S.png')
+	savefig('intento No ' + str(numIntento)+ ' beta y S.png')
 	plt.show()
 	plt.close()	
 
 	scatter(km1,km2)
-	savefig('intento No' + str(numIntento)+ 'alfa y km1.png')
+	savefig('intento No ' + str(numIntento)+ ' alfa y km1.png')
 	plt.show()
 	plt.close()	
 
 	scatter(km1,S)
-	savefig('intento No' + str(numIntento)+ 'km1 y S.png')
+	savefig('intento No ' + str(numIntento)+ ' km1 y S.png')
 	plt.show()
 	plt.close()
 
 	scatter(km2,S)
-	savefig('intento No' + str(numIntento)+ 'km2 y S.png')
+	savefig('intento No ' + str(numIntento)+ ' km2 y S.png')
 	plt.show()
 	plt.close()		
 
 	#Histogramas
 
 	count, bins, ignored =plt.hist(alfa, 20, normed=True)
-	savefig('intento No' + str(numIntento)+ 'histograma alfa.png')
+	savefig('intento No ' + str(numIntento)+ ' histograma alfa.png')
 	plt.show()
 	plt.close()
 
 	count, bins, ignored =plt.hist(beta, 20, normed=True)
-	savefig('intento No' + str(numIntento)+ 'histograma beta.png')
+	savefig('intento No ' + str(numIntento)+ ' histograma beta.png')
 	plt.show()
 	plt.close()
 
 	count, bins, ignored =plt.hist(km1, 20, normed=True)
-	savefig('intento No' + str(numIntento)+ 'histograma km1.png')
+	savefig('intento No ' + str(numIntento)+ ' histograma km1.png')
 	plt.show()
 	plt.close()
 
 	count, bins, ignored =plt.hist(km2, 20, normed=True)
-	savefig('intento No' + str(numIntento)+ 'histograma km2.png')
+	savefig('intento No ' + str(numIntento)+ ' histograma km2.png')
 	plt.show()
 	plt.close()
 
 	count, bins, ignored =plt.hist(S, 20, normed=True)
-	savefig('intento No' + str(numIntento)+ 'histograma S.png')
+	savefig('intento No ' + str(numIntento)+ ' histograma S.png')
 	plt.show()
 	plt.close()
 
