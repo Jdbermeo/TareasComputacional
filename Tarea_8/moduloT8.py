@@ -143,6 +143,44 @@ def graficar(x_obs,y_obs,alfa,beta,km1,km2,S,numIntento,chi):
 	plt.show()
 	plt.close()		
 
+	#Contorno
+	
+
+        scatter(alfa,beta,chi)
+        savefig('alfa_beta_chi.png')
+        plt.title('Contorno alfa - b Vs chi2')
+        plt.show()
+        plt.close()
+
+
+
+        scatter(alfa,km1,chi)
+        savefig('alfa_km1_chi.png')
+        plt.title('Contorno alfa - km1 Vs chi2')
+        plt.show()
+        plt.close()
+
+
+        scatter(alfa,km2,chi)
+        savefig('alfa_km2_chi.png')
+        plt.title('Contorno alfa - km2 Vs chi2')
+        plt.show()
+        plt.close()
+
+        scatter(alfa,S,chi)
+        savefig('alfa_S_chi.png')
+        plt.title('Contorno alfa - S Vs chi2')
+        plt.show()
+        plt.close()
+
+
+	scatter(km2,S,chi)
+	savefig('km2_S_chi.png')
+        plt.title('Contorno km2 - S Vs chi2')
+        plt.show()
+        plt.close()
+
+
 	#Histogramas
 
 	count, bins, ignored =plt.hist(alfa, 20, normed=True)
