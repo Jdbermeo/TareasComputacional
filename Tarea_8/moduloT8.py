@@ -180,6 +180,31 @@ def graficar(x_obs,y_obs,alfa,beta,km1,km2,S,numIntento,chi):
         plt.show()
         plt.close()
 
+        scatter(beta,km1,chi)
+        savefig('beta_km1_chi.png')
+        plt.title('Contorno beta - km1 Vs chi2')
+        plt.show()
+        plt.close()
+
+        scatter(beta,km2,chi)
+        savefig('beta_km2_chi.png')
+        plt.title('Contorno beta - km2 Vs chi2')
+        plt.show()
+        plt.close()
+
+	scatter(beta,S,chi)
+        savefig('beta_S_chi.png')
+        plt.title('Contorno beta - S Vs chi2')
+        plt.show()
+        plt.close()
+
+	scatter(km1,km2,chi)
+        savefig('km1_km2_chi.png')
+        plt.title('Contorno km1 - km2 Vs chi2')
+        plt.show()
+        plt.close()
+
+
 
 	#Histogramas
 
